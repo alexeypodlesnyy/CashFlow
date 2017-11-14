@@ -15,17 +15,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-
 import com.araragi.cashflow.CashFlowApp;
 import com.araragi.cashflow.R;
 import com.araragi.cashflow.entity.CashTransaction;
-
 import com.araragi.cashflow.fragments.NewCashTransactionFragment;
 import com.araragi.cashflow.fragments.RecyclerViewCashFragment;
 import com.araragi.cashflow.fragments.StatisticsFragment;
-
-import java.util.List;
-
 import io.objectbox.Box;
 import io.objectbox.BoxStore;
 import io.objectbox.query.Query;
@@ -64,16 +59,6 @@ public class MainActivity extends AppCompatActivity
 
         BoxStore boxStore = ((CashFlowApp) getApplication()).getBoxStore();
         cashBox = boxStore.boxFor(CashTransaction.class);
-
-        //cashBox.removeAll();
-        //cashBox.put(new CashTransaction("789", 1, "2017", "food", "vetchina"));
-
-
-        cashMoneyQuery = cashBox.query().build();
-        List<CashTransaction> moneys = cashMoneyQuery.find();
-        for (CashTransaction money:moneys){
-            Log.i("main", "---" + money.customToString() + "---");
-        }
 
 
         newCashTransactionFragment = new NewCashTransactionFragment();

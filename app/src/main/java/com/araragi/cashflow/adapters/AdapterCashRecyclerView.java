@@ -1,22 +1,16 @@
 package com.araragi.cashflow.adapters;
 
-import android.content.Context;
-import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.araragi.cashflow.R;
 import com.araragi.cashflow.entity.CashTransaction;
 import com.araragi.cashflow.entity.CustomDate;
-import com.araragi.cashflow.fragments.TransactionDetails;
 
 import java.util.ArrayList;
 
@@ -28,6 +22,20 @@ public class AdapterCashRecyclerView extends RecyclerView.Adapter<AdapterCashRec
 
     private static final String TAG = "CustomAdapter";
     protected ArrayList<CashTransaction> mDataSet;
+
+    public interface OnItemClickListener {
+        void onItemClicked(View v, int position);
+    }
+
+    private OnItemClickListener listener;
+
+
+
+    public AdapterCashRecyclerView(ArrayList<CashTransaction> cashTransactions, OnItemClickListener listener) {
+
+        mDataSet = cashTransactions;
+        this.listener = listener;
+    }
 
     FragmentManager fragmentManager;
 
@@ -53,25 +61,26 @@ public class AdapterCashRecyclerView extends RecyclerView.Adapter<AdapterCashRec
             textAmount = (TextView)v.findViewById(R.id.txt_item_amount);
             image = (ImageView)v.findViewById(R.id.item_image_plus);
 
-            v.setOnClickListener(new View.OnClickListener() {
+
+//            v.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//
+//                    int position = getAdapterPosition();
+//                    CashTransaction cashTransaction = mDataSet.get(position);
+//                    Log.v("adapter","--- Transaction clicked: " + cashTransaction.customToString());
+//                    Toast.makeText(v.getContext(), cashTransaction.customToString(), Toast.LENGTH_SHORT).show();
+//
+//                }
+//            });
+
+            itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
-                    int position = getAdapterPosition();
-                    CashTransaction cashTransaction = mDataSet.get(position);
-                    Log.v("adapter","--- Transaction clicked: " + cashTransaction.customToString());
-                    Toast.makeText(v.getContext(), cashTransaction.customToString(), Toast.LENGTH_SHORT).show();
-
-
-
+                    listener.onItemClicked(v, getAdapterPosition());
                 }
             });
-
-
-
         }
-
-
 
 
 
@@ -90,9 +99,7 @@ public class AdapterCashRecyclerView extends RecyclerView.Adapter<AdapterCashRec
     }
 
 
-    public AdapterCashRecyclerView(ArrayList<CashTransaction> cashTransactions) {
-        mDataSet = cashTransactions;
-    }
+
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {

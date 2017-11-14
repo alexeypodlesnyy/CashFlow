@@ -70,7 +70,7 @@ public class NewCashTransactionFragment extends Fragment implements DatePickerDi
     private Box<CashTransaction> cashBox;
     private Query<CashTransaction> cashMoneyQuery;
 
-    private long timeInMillis;
+
 
     @Nullable
     @Override
@@ -93,7 +93,7 @@ public class NewCashTransactionFragment extends Fragment implements DatePickerDi
 
         Calendar c = Calendar.getInstance();
 
-        timeInMillis = c.getTimeInMillis();
+        dateInMillis = c.getTimeInMillis();
 
         int mYear = c.get(Calendar.YEAR);
         int mMonth = c.get(Calendar.MONTH);
@@ -180,12 +180,8 @@ public class NewCashTransactionFragment extends Fragment implements DatePickerDi
             description.setText("");
 
             Calendar c = Calendar.getInstance();
-            int mYear = c.get(Calendar.YEAR);
-            int mMonth = c.get(Calendar.MONTH);
-            int mDay = c.get(Calendar.DAY_OF_MONTH);
-            dateInMillis = c.getTimeInMillis();
 
-            editDate.setText(CustomDate.toCustomDate(mDay, mMonth, mYear));
+            editDate.setText(CustomDate.toCustomDateFromMillis(c.getTimeInMillis()));
 
         }
         cashMoneyQuery = ((MainActivity) getActivity()).cashBox.query().build();

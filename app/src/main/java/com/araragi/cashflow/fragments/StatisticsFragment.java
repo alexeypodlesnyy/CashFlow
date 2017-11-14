@@ -22,6 +22,8 @@ import com.araragi.cashflow.utilities.StatisticalCalculations;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -34,7 +36,7 @@ import io.objectbox.query.Query;
  * Created by Araragi on 2017-09-21.
  */
 
-public class StatisticsFragment extends Fragment implements DatePickerDialog.OnDateSetListener{
+public class StatisticsFragment extends Fragment {
 
     public static final String TAG = "StatisticsFragment";
 
@@ -70,9 +72,6 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
         BoxStore boxStore =((CashFlowApp)getActivity().getApplication()).getBoxStore();
         cashBox = boxStore.boxFor(CashTransaction.class);
 
-
-
-
         return view;
     }
 
@@ -89,17 +88,17 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
         super.onStart();
 
         Calendar c = Calendar.getInstance();
-        int mYear = c.get(Calendar.YEAR);
-        int mMonth = c.get(Calendar.MONTH);
-        int mDay = c.get(Calendar.DAY_OF_MONTH);
-
-        textDateFrom.setText("??");
-        textDateTo.setText(((mDay + "-" + (mMonth+1) + "-" + mYear)));
 
         cashMoneyQuery = ((MainActivity) getActivity()).cashBox.query().build();
         cashTransactionArrayList = new ArrayList<>(cashMoneyQuery.find());
-        calculations = new StatisticalCalculations(cashTransactionArrayList);
 
+        CashTransaction transactionMin = Collections.min(cashTransactionArrayList);
+        CashTransaction transactionMax = Collections.max(cashTransactionArrayList);
+
+        textDateFrom.setText(CustomDate.toCustomDateFromMillis(transactionMin.getDate()));
+        textDateTo.setText(CustomDate.toCustomDateFromMillis(transactionMax.getDate()));
+
+        calculations = new StatisticalCalculations(cashTransactionArrayList);
         calculations.calculate();
 
         setViewWithAmounts(calculations);
@@ -121,6 +120,7 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
     }
 
     private void setViewWithAmounts(StatisticalCalculations calculations){
+
         textIncomeTotalAmount.setText(calculations.getTotalIncome().toString());
         textExpenseTotalAmount.setText(calculations.getTotalExpense().toString());
         textBalanceAmount.setText(calculations.getBalance().toString());
@@ -134,19 +134,19 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
         textCategoriesExpenseAmounts.setText(categoriesExpense[1]);
 
     }
-
-    public void onDateSet(DatePicker view, int year, int month, int day) {
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(year,month,day,12, 12,12);
-        long dateInMillis = calendar.getTimeInMillis();
-
-        //editDate.setText(CustomDate.toCustomDateFromMillis(dateInMillis));
-
-        Log.i("onDateSet", "----long millis set manually = " + dateInMillis);
-
-
-    }
+//
+//    public void onDateSet(DatePicker view, int year, int month, int day) {
+//
+//        Calendar calendar = Calendar.getInstance();
+//        calendar.set(year,month,day,12, 12,12);
+//        long dateInMillis = calendar.getTimeInMillis();
+//
+//        //editDate.setText(CustomDate.toCustomDateFromMillis(dateInMillis));
+//
+//        Log.i("onDateSet", "----long millis set manually = " + dateInMillis);
+//
+//
+//    }
 
 
 }

@@ -1,5 +1,7 @@
 package com.araragi.cashflow.entity;
 
+import java.util.Comparator;
+
 import io.objectbox.annotation.Entity;
 import io.objectbox.annotation.Id;
 
@@ -7,7 +9,7 @@ import io.objectbox.annotation.Id;
  * Created by Araragi on 2017-09-14.
  */
 @Entity
-public class CashTransaction {
+public class CashTransaction implements Comparable<CashTransaction>{
 
     public static final int TYPE_EXPENSE = 1;
     public static final int TYPE_INCOME = 2;
@@ -85,4 +87,31 @@ public class CashTransaction {
         String s = this.getAmount() + " " + this.getDate() + " " + this.getDescription() + " " + this.getCategory();
         return s;
     }
+
+    @Override
+    public int compareTo(CashTransaction cashTransaction) {
+        if(this.getDate() - cashTransaction.getDate() > 0){
+            return 1;
+        }if (this.getDate() - cashTransaction.getDate() < 0) {
+            return -1;
+        }else {
+            return 0;
+        }
+    }
+
+    public static Comparator<CashTransaction> CashComparator = new Comparator<CashTransaction>() {
+
+        @Override
+        public int compare(CashTransaction cashTransactionOne, CashTransaction cashTransactionTwo) {
+            if(cashTransactionOne.getDate() - cashTransactionTwo.getDate() > 0){
+                return 1;
+            }if (cashTransactionOne.getDate() - cashTransactionTwo.getDate() < 0) {
+                return -1;
+            }else {
+                return 0;
+            }
+        }
+    };
+
+
 }

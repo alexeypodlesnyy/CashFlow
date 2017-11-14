@@ -4,16 +4,18 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Toast;
 
 import com.araragi.cashflow.CashFlowApp;
 import com.araragi.cashflow.R;
@@ -32,7 +34,7 @@ import io.objectbox.query.Query;
  * Created by Araragi on 2017-09-20.
  */
 
-public class RecyclerViewCashFragment extends Fragment {
+public class RecyclerViewCashFragment extends Fragment implements AdapterCashRecyclerView.OnItemClickListener{
 
     public static final String TAG = "RecyclerViewFragment";
 
@@ -40,6 +42,10 @@ public class RecyclerViewCashFragment extends Fragment {
     protected AdapterCashRecyclerView mAdapter;
     protected LinearLayoutManager mLayoutManager;
     protected ArrayList<CashTransaction> dataSet;
+
+    private CashTransaction cashTransactionDeleted;
+
+    private AdapterCashRecyclerView.OnItemClickListener listener;
 
     private Box<CashTransaction> cashBox;
     private Query<CashTransaction> cashMoneyQuery;
@@ -64,7 +70,7 @@ public class RecyclerViewCashFragment extends Fragment {
 
 
         mRecyclerView.setLayoutManager(mLayoutManager);
-        mAdapter = new AdapterCashRecyclerView(dataSet);
+        mAdapter = new AdapterCashRecyclerView(dataSet, this);
         mRecyclerView.setAdapter(mAdapter);
         mAdapter.notifyDataSetChanged();
 
@@ -118,8 +124,13 @@ public class RecyclerViewCashFragment extends Fragment {
         List<CashTransaction> transactionList = cashMoneyQuery.find();
         dataSet = new ArrayList<CashTransaction>(transactionList);
 
+    }
+    private void resetDataset(){
 
-
+        cashMoneyQuery = cashBox.query().orderDesc(CashTransaction_.date).build();
+        List<CashTransaction> transactionList = cashMoneyQuery.find();
+        dataSet = new ArrayList<CashTransaction>(transactionList);
+        mAdapter.notifyDataSetChanged();
     }
 
 
@@ -138,20 +149,56 @@ public class RecyclerViewCashFragment extends Fragment {
         public void onSwiped(final RecyclerView.ViewHolder viewHolder, int direction) {
             int position = viewHolder.getAdapterPosition();
             CashTransaction transaction = dataSet.get(position);
+            cashTransactionDeleted = transaction;
             dataSet.remove(position);
             cashBox.remove(transaction);
             mAdapter.notifyItemRemoved(position);
 
-            Snackbar.make(mRecyclerView, "Element deleted", Snackbar.LENGTH_SHORT)
-                    .setAction("UNDO", null).show();
+
+            Snackbar.make(mRecyclerView, "Element deleted", Snackbar.LENGTH_LONG)
+                    .setAction("UNDO", new SnackBarUndoListener()).show();
 
         }
 
         @Override
         public boolean isLongPressDragEnabled() {
-            return true;
+            return false;
         }
     }
+
+    public class SnackBarUndoListener implements View.OnClickListener{
+
+        @Override
+        public void onClick(View v) {
+
+
+            if(cashTransactionDeleted!=null){
+                cashBox.put(cashTransactionDeleted);
+                resetDataset();
+                Toast.makeText(getActivity(), "Deletion undone", Toast.LENGTH_SHORT).show();
+            }else{
+                Toast.makeText(getActivity(), "Transaction object null", Toast.LENGTH_SHORT).show();}
+
+
+        }
+    }
+
+    @Override
+    public void onItemClicked(View v, int position) {
+
+        CashTransaction transaction = dataSet.get(position);
+        Log.i("recycler on click", "----on click: -----" + transaction.customToString());
+
+        DialogFragment transactionDetailsFragment = new TransactionDetailsDialogFragment();
+        transactionDetailsFragment.setTargetFragment(this,1234);
+        transactionDetailsFragment.show(getActivity().getSupportFragmentManager(), "TransactionDetailsDialogFragment");
+
+        Bundle bundle = new Bundle();
+        bundle.putLong("transactionId", transaction.getId());
+        transactionDetailsFragment.setArguments(bundle);
+    }
+
+
 
 
 
