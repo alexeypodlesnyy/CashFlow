@@ -1,6 +1,6 @@
 package com.araragi.cashflow.utilities;
 
-import com.araragi.cashflow.entity.CashTransaction;
+import com.araragi.cashflow.entity.CashTransact;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -25,18 +25,18 @@ public class StatisticalCalculations {
 
 
 
-    private ArrayList<CashTransaction> cashTransactions;
+    private ArrayList<CashTransact> cashTransacts;
 
-    public StatisticalCalculations(ArrayList<CashTransaction> cashTransactions){
-        this.cashTransactions = cashTransactions;
+    public StatisticalCalculations(ArrayList<CashTransact> cashTransacts){
+        this.cashTransacts = cashTransacts;
     }
 
-    public ArrayList<CashTransaction> getCashTransactions() {
-        return cashTransactions;
+    public ArrayList<CashTransact> getCashTransacts() {
+        return cashTransacts;
     }
 
-//    public void setCashTransactions(ArrayList<CashTransaction> cashTransactions) {
-//        this.cashTransactions = cashTransactions;
+//    public void setCashTransactions(ArrayList<CashTransact> cashTransacts) {
+//        this.cashTransacts = cashTransacts;
 //    }
 
     public boolean calculate(){
@@ -48,14 +48,14 @@ public class StatisticalCalculations {
         categoriesTotalExpense = new HashMap<>();
         categoriesTotalIncome = new HashMap<>();
 
-        ArrayList<CashTransaction> localList = getCashTransactions();
+        ArrayList<CashTransact> localList = getCashTransacts();
 
-        for(CashTransaction cashTransaction:localList){
-            BigDecimal localAmount = new BigDecimal(cashTransaction.getAmount());
-            String category = cashTransaction.getCategory();
-            int typeOfCashTransaction = cashTransaction.getType();
+        for(CashTransact cashTransact :localList){
+            BigDecimal localAmount = new BigDecimal(cashTransact.getAmount());
+            String category = cashTransact.getCategory();
+            int typeOfCashTransaction = cashTransact.getType();
             switch(typeOfCashTransaction){
-                case CashTransaction.TYPE_EXPENSE:
+                case CashTransact.TYPE_EXPENSE:
                     totalExpense = totalExpense.add(localAmount);
                     if(categoriesTotalExpense.get(category)==null){
                         categoriesTotalExpense.put(category, localAmount);
@@ -65,7 +65,7 @@ public class StatisticalCalculations {
                         categoriesTotalExpense.put(category, totalByCategory);
                     }
                     break;
-                case CashTransaction.TYPE_INCOME:
+                case CashTransact.TYPE_INCOME:
                     totalIncome = totalIncome.add(localAmount);
                     if(categoriesTotalIncome.get(category)==null){
                         categoriesTotalIncome.put(category, localAmount);

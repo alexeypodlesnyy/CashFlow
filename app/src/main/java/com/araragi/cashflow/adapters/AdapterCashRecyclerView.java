@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.araragi.cashflow.R;
-import com.araragi.cashflow.entity.CashTransaction;
+import com.araragi.cashflow.entity.CashTransact;
 import com.araragi.cashflow.entity.CustomDate;
 
 import java.util.ArrayList;
@@ -21,7 +21,7 @@ import java.util.ArrayList;
 public class AdapterCashRecyclerView extends RecyclerView.Adapter<AdapterCashRecyclerView.ViewHolder> {
 
     private static final String TAG = "CustomAdapter";
-    protected ArrayList<CashTransaction> mDataSet;
+    protected ArrayList<CashTransact> mDataSet;
 
     public interface OnItemClickListener {
         void onItemClicked(View v, int position);
@@ -31,9 +31,9 @@ public class AdapterCashRecyclerView extends RecyclerView.Adapter<AdapterCashRec
 
 
 
-    public AdapterCashRecyclerView(ArrayList<CashTransaction> cashTransactions, OnItemClickListener listener) {
+    public AdapterCashRecyclerView(ArrayList<CashTransact> cashTransacts, OnItemClickListener listener) {
 
-        mDataSet = cashTransactions;
+        mDataSet = cashTransacts;
         this.listener = listener;
     }
 
@@ -48,6 +48,7 @@ public class AdapterCashRecyclerView extends RecyclerView.Adapter<AdapterCashRec
         private final TextView textCategory;
         private final TextView textAmount;
         private final ImageView image;
+        private final TextView textDate;
 
 
 
@@ -57,8 +58,9 @@ public class AdapterCashRecyclerView extends RecyclerView.Adapter<AdapterCashRec
 
 
             textCategory = (TextView) v.findViewById(R.id.txt_item_category);
-            textDescription = (TextView)v.findViewById(R.id.txt_item_description);
+            textDescription = (TextView)v.findViewById(R.id.text_item_description);
             textAmount = (TextView)v.findViewById(R.id.txt_item_amount);
+            textDate = (TextView)v.findViewById(R.id.txt_item_date);
             image = (ImageView)v.findViewById(R.id.item_image_plus);
 
 
@@ -67,7 +69,7 @@ public class AdapterCashRecyclerView extends RecyclerView.Adapter<AdapterCashRec
 //                public void onClick(View v) {
 //
 //                    int position = getAdapterPosition();
-//                    CashTransaction cashTransaction = mDataSet.get(position);
+//                    CashTransact cashTransaction = mDataSet.get(position);
 //                    Log.v("adapter","--- Transaction clicked: " + cashTransaction.customToString());
 //                    Toast.makeText(v.getContext(), cashTransaction.customToString(), Toast.LENGTH_SHORT).show();
 //
@@ -84,7 +86,7 @@ public class AdapterCashRecyclerView extends RecyclerView.Adapter<AdapterCashRec
 
 
 
-        public TextView getTextViewDiscription() {
+        public TextView getTextViewDescription() {
             return textDescription;
         }
         public TextView getTextCategory(){
@@ -93,6 +95,7 @@ public class AdapterCashRecyclerView extends RecyclerView.Adapter<AdapterCashRec
         public TextView getTextAmount(){
             return textAmount;
         }
+        public TextView getTextDate(){return textDate;}
         public ImageView getImage(){
             return image;
         }
@@ -114,14 +117,15 @@ public class AdapterCashRecyclerView extends RecyclerView.Adapter<AdapterCashRec
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
        // Log.d(TAG, "Element " + position + " set.");
-        CashTransaction cashTransaction = mDataSet.get(position);
-        viewHolder.getTextCategory().setText(cashTransaction.getCategory());
-        long millis = cashTransaction.getDate();
+        CashTransact cashTransact = mDataSet.get(position);
+        viewHolder.getTextCategory().setText(cashTransact.getCategory());
+        long millis = cashTransact.getDate();
 
-        viewHolder.getTextViewDiscription().setText(CustomDate.toCustomDateFromMillis(millis));
-        viewHolder.getTextAmount().setText(cashTransaction.getAmount());
+        viewHolder.getTextDate().setText(CustomDate.toCustomDateFromMillis(millis));
+        viewHolder.getTextViewDescription().setText(cashTransact.getDescription());
+        viewHolder.getTextAmount().setText(cashTransact.getAmount());
         viewHolder.getImage()
-                .setImageResource(cashTransaction.getType()==CashTransaction.TYPE_INCOME?
+                .setImageResource(cashTransact.getType()== CashTransact.TYPE_INCOME?
                 R.mipmap.plus_sign:R.mipmap.minus_sign);
 
     }

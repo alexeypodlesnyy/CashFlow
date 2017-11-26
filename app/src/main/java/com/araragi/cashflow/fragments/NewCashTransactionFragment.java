@@ -13,7 +13,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RadioButton;
@@ -24,7 +23,7 @@ import android.widget.Toast;
 import com.araragi.cashflow.CashFlowApp;
 import com.araragi.cashflow.R;
 import com.araragi.cashflow.activities.MainActivity;
-import com.araragi.cashflow.entity.CashTransaction;
+import com.araragi.cashflow.entity.CashTransact;
 import com.araragi.cashflow.entity.CustomDate;
 
 import java.math.BigDecimal;
@@ -67,8 +66,8 @@ public class NewCashTransactionFragment extends Fragment implements DatePickerDi
 
     private static final int MAX_LENGTH_DESCRIPTION = 500;
 
-    private Box<CashTransaction> cashBox;
-    private Query<CashTransaction> cashMoneyQuery;
+    private Box<CashTransact> cashBox;
+    private Query<CashTransact> cashMoneyQuery;
 
 
 
@@ -77,11 +76,11 @@ public class NewCashTransactionFragment extends Fragment implements DatePickerDi
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         setHasOptionsMenu(true);
-        View view = inflater.inflate(R.layout.frgmt_new_transaction, container, false);
+        View view = inflater.inflate(R.layout.frgmt_add_new_transact, container, false);
         unbinder = ButterKnife.bind(this, view);
 
         BoxStore boxStore =((CashFlowApp)getActivity().getApplication()).getBoxStore();
-        cashBox = boxStore.boxFor(CashTransaction.class);
+        cashBox = boxStore.boxFor(CashTransact.class);
 
 
         return view;
@@ -166,10 +165,10 @@ public class NewCashTransactionFragment extends Fragment implements DatePickerDi
 
     public void saveBtnClicked() {
 
-        CashTransaction cashTransaction = viewToCashTransaction();
-        if(cashTransaction != null) {
+        CashTransact cashTransact = viewToCashTransaction();
+        if(cashTransact != null) {
             try {
-                ((MainActivity) getActivity()).cashBox.put(cashTransaction);
+                ((MainActivity) getActivity()).cashBox.put(cashTransact);
                 Toast.makeText(getActivity(), "Transaction saved", Toast.LENGTH_SHORT).show();
 
             }catch (Exception ex){
@@ -185,16 +184,16 @@ public class NewCashTransactionFragment extends Fragment implements DatePickerDi
 
         }
         cashMoneyQuery = ((MainActivity) getActivity()).cashBox.query().build();
-        List<CashTransaction> moneys = cashMoneyQuery.find();
-        for (CashTransaction money : moneys) {
+        List<CashTransact> moneys = cashMoneyQuery.find();
+        for (CashTransact money : moneys) {
             Log.i("main", money.getDescription() + " " + money.getAmount() + " " + money.getId());
         }
 
     }
 
-    private CashTransaction viewToCashTransaction(){
+    private CashTransact viewToCashTransaction(){
 
-            CashTransaction cashMoneyTransaction;
+            CashTransact cashMoneyTransaction;
             boolean isExpense = expenseRadioBtn.isChecked();
             BigDecimal amountBigDecimal;
             String s = "";
@@ -225,12 +224,12 @@ public class NewCashTransactionFragment extends Fragment implements DatePickerDi
 
 
         if(isExpense){
-            cashMoneyTransaction = new CashTransaction(amountBigDecimal.toString(),
-                    CashTransaction.TYPE_EXPENSE, date, category, descr);
+            cashMoneyTransaction = new CashTransact(amountBigDecimal.toString(),
+                    CashTransact.TYPE_EXPENSE, date, category, descr);
         }
         else {
-            cashMoneyTransaction = new CashTransaction(amountBigDecimal.toString(),
-                    CashTransaction.TYPE_INCOME, date, category, descr);
+            cashMoneyTransaction = new CashTransact(amountBigDecimal.toString(),
+                    CashTransact.TYPE_INCOME, date, category, descr);
 
         }
         return cashMoneyTransaction;

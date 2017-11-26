@@ -1,28 +1,24 @@
 package com.araragi.cashflow.fragments;
 
-import android.app.DatePickerDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.DatePicker;
 import android.widget.TextView;
 
 import com.araragi.cashflow.CashFlowApp;
 import com.araragi.cashflow.R;
 import com.araragi.cashflow.activities.MainActivity;
-import com.araragi.cashflow.entity.CashTransaction;
+import com.araragi.cashflow.entity.CashTransact;
 import com.araragi.cashflow.entity.CustomDate;
 import com.araragi.cashflow.utilities.StatisticalCalculations;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Collections;
 
 import butterknife.BindView;
@@ -42,10 +38,10 @@ public class StatisticsFragment extends Fragment {
 
     private Unbinder unbinder;
 
-    private Box<CashTransaction> cashBox;
-    private Query<CashTransaction> cashMoneyQuery;
+    private Box<CashTransact> cashBox;
+    private Query<CashTransact> cashMoneyQuery;
 
-    private ArrayList<CashTransaction> cashTransactionArrayList;
+    private ArrayList<CashTransact> cashTransactArrayList;
 
     private StatisticalCalculations calculations;
 
@@ -67,10 +63,10 @@ public class StatisticsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         setHasOptionsMenu(true);
-        View view = inflater.inflate(R.layout.fragment_statistics, container, false);
+        View view = inflater.inflate(R.layout.frgmt_statistics_updated, container, false);
         unbinder = ButterKnife.bind(this, view);
         BoxStore boxStore =((CashFlowApp)getActivity().getApplication()).getBoxStore();
-        cashBox = boxStore.boxFor(CashTransaction.class);
+        cashBox = boxStore.boxFor(CashTransact.class);
 
         return view;
     }
@@ -87,21 +83,26 @@ public class StatisticsFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
-        Calendar c = Calendar.getInstance();
+
 
         cashMoneyQuery = ((MainActivity) getActivity()).cashBox.query().build();
-        cashTransactionArrayList = new ArrayList<>(cashMoneyQuery.find());
+        cashTransactArrayList = new ArrayList<>(cashMoneyQuery.find());
 
-        CashTransaction transactionMin = Collections.min(cashTransactionArrayList);
-        CashTransaction transactionMax = Collections.max(cashTransactionArrayList);
+        if(cashTransactArrayList.size() > 0) {
+            CashTransact transactionMin = Collections.min(cashTransactArrayList);
+            CashTransact transactionMax = Collections.max(cashTransactArrayList);
 
-        textDateFrom.setText(CustomDate.toCustomDateFromMillis(transactionMin.getDate()));
-        textDateTo.setText(CustomDate.toCustomDateFromMillis(transactionMax.getDate()));
+            textDateFrom.setText("From: " + CustomDate.toCustomDateFromMillis(transactionMin.getDate()));
+            textDateTo.setText("To: " + CustomDate.toCustomDateFromMillis(transactionMax.getDate()));
 
-        calculations = new StatisticalCalculations(cashTransactionArrayList);
-        calculations.calculate();
+            calculations = new StatisticalCalculations(cashTransactArrayList);
+            calculations.calculate();
 
-        setViewWithAmounts(calculations);
+            setViewWithAmounts(calculations);
+
+        }else{
+            setViewIfDbEmpty();
+        }
 
 
 
@@ -133,6 +134,17 @@ public class StatisticsFragment extends Fragment {
         textCategoriesExpense.setText(categoriesExpense[0]);
         textCategoriesExpenseAmounts.setText(categoriesExpense[1]);
 
+    }
+
+    private void setViewIfDbEmpty(){
+        Calendar c = Calendar.getInstance();
+        String date = CustomDate.toCustomDateFromMillis(c.getTimeInMillis());
+        textDateFrom.setText(date);
+        textDateTo.setText(date);
+
+        textIncomeTotalAmount.setText("0");
+        textExpenseTotalAmount.setText("0");
+        textBalanceAmount.setText("0");
     }
 //
 //    public void onDateSet(DatePicker view, int year, int month, int day) {

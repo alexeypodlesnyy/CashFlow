@@ -8,9 +8,7 @@ import android.support.v7.app.AlertDialog;
 import android.util.Log;
 
 import com.araragi.cashflow.CashFlowApp;
-import com.araragi.cashflow.R;
-import com.araragi.cashflow.entity.CashTransaction;
-import com.araragi.cashflow.entity.CashTransaction_;
+import com.araragi.cashflow.entity.CashTransact;
 import com.araragi.cashflow.entity.CustomDate;
 
 import io.objectbox.Box;
@@ -24,7 +22,7 @@ public class TransactionDetailsDialogFragment extends DialogFragment {
 
     public static final String TAG = "TransactionDetailsDialogFragment";
 
-    private Box<CashTransaction> cashBox;
+    private Box<CashTransact> cashBox;
 
     private long transactionId;
 
@@ -47,9 +45,9 @@ public class TransactionDetailsDialogFragment extends DialogFragment {
         }
 
         BoxStore boxStore =((CashFlowApp)getActivity().getApplication()).getBoxStore();
-        cashBox = boxStore.boxFor(CashTransaction.class);
+        cashBox = boxStore.boxFor(CashTransact.class);
         Log.i("dialog", "-----transaction id: " + getTransactionId() + "----");
-        CashTransaction transaction = cashBox.get(getTransactionId());
+        CashTransact transaction = cashBox.get(getTransactionId());
 
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());

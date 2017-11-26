@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -17,10 +16,12 @@ import android.view.MenuItem;
 
 import com.araragi.cashflow.CashFlowApp;
 import com.araragi.cashflow.R;
-import com.araragi.cashflow.entity.CashTransaction;
+import com.araragi.cashflow.entity.CashTransact;
+import com.araragi.cashflow.fragments.DataManagerFragment;
 import com.araragi.cashflow.fragments.NewCashTransactionFragment;
 import com.araragi.cashflow.fragments.RecyclerViewCashFragment;
 import com.araragi.cashflow.fragments.StatisticsFragment;
+
 import io.objectbox.Box;
 import io.objectbox.BoxStore;
 import io.objectbox.query.Query;
@@ -28,15 +29,16 @@ import io.objectbox.query.Query;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    public Box<CashTransaction> cashBox;
+    public Box<CashTransact> cashBox;
 
-    private Query<CashTransaction> cashMoneyQuery;
+    private Query<CashTransact> cashMoneyQuery;
     private FragmentManager fragmentManager;
     private FragmentTransaction fragmentTransaction;
 
     public NewCashTransactionFragment newCashTransactionFragment;
     public RecyclerViewCashFragment listFragment;
     public StatisticsFragment statFragment;
+    public DataManagerFragment dataManagerFragment;
 
 
     @Override
@@ -55,16 +57,25 @@ public class MainActivity extends AppCompatActivity
         final NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-
-
         BoxStore boxStore = ((CashFlowApp) getApplication()).getBoxStore();
-        cashBox = boxStore.boxFor(CashTransaction.class);
+        cashBox = boxStore.boxFor(CashTransact.class);
+
+//        ArrayList<CashTransact> testArray = new ArrayList<>();
+//
+//        long timeStart = SystemClock.currentThreadTimeMillis();
+//        for(int i = 0; i < 100000; i++){
+//            CashTransact transaction = new CashTransact(i+"", 1, 15000000, "other", "");
+//            testArray.add(transaction);
+//        }
+//        Log.i("main", "---time for creating test data = " + (SystemClock.currentThreadTimeMillis() - timeStart));
+//
+//        long timeStart2 = SystemClock.currentThreadTimeMillis();
+//        cashBox.put(testArray);
+//        Log.i("main", "---time for adding test data to DB = " + (SystemClock.currentThreadTimeMillis() - timeStart));
+
 
 
         newCashTransactionFragment = new NewCashTransactionFragment();
-        listFragment = new RecyclerViewCashFragment();
-        statFragment = new StatisticsFragment();
-
 
         fragmentManager = getSupportFragmentManager();
         fragmentTransaction = fragmentManager.beginTransaction();
@@ -89,9 +100,10 @@ public class MainActivity extends AppCompatActivity
                     navigationView.setCheckedItem(R.id.nav_statistics);
                     toolbar.setTitle("Statistics");
                     }
-//              if(fragment instanceof DatabaseFragment({
-//                    navigationView.setCheckedItem(R.id.nav_database);
-//                }
+              if(fragment instanceof DataManagerFragment){
+                    navigationView.setCheckedItem(R.id.nav_database);
+                    toolbar.setTitle("Data");
+                }
 
 
             }
@@ -111,27 +123,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -148,6 +140,9 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_statistics:
                 onStatisticsClicked();
                 break;
+            case R.id.nav_database:
+                onDatabaseClicked();
+                break;
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -159,6 +154,7 @@ public class MainActivity extends AppCompatActivity
     public void onListClicked() {
 
 
+        listFragment = new RecyclerViewCashFragment();
         fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.fragments_container, listFragment, listFragment.TAG);
         fragmentTransaction.addToBackStack(listFragment.TAG);
@@ -176,11 +172,18 @@ public class MainActivity extends AppCompatActivity
 
     public void onDatabaseClicked() {
 
+        dataManagerFragment = new DataManagerFragment();
+        fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.fragments_container, dataManagerFragment);
+        fragmentTransaction.addToBackStack(DataManagerFragment.TAG);
+        fragmentTransaction.commit();
+
+
     }
 
     public void onStatisticsClicked() {
 
-
+        statFragment = new StatisticsFragment();
         fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.fragments_container, statFragment);
         fragmentTransaction.addToBackStack(StatisticsFragment.TAG);

@@ -9,7 +9,7 @@ import io.objectbox.annotation.Id;
  * Created by Araragi on 2017-09-14.
  */
 @Entity
-public class CashTransaction implements Comparable<CashTransaction>{
+public class CashTransact implements Comparable<CashTransact>{
 
     public static final int TYPE_EXPENSE = 1;
     public static final int TYPE_INCOME = 2;
@@ -23,9 +23,9 @@ public class CashTransaction implements Comparable<CashTransaction>{
     private String category;
     private String description;
 
-    public CashTransaction(){}
+    public CashTransact(){}
 
-    public CashTransaction(String amount, int type, long date, String category, String description) {
+    public CashTransact(String amount, int type, long date, String category, String description) {
 
         this.amount = amount;
         this.type = type;
@@ -84,28 +84,30 @@ public class CashTransaction implements Comparable<CashTransaction>{
 
     public String customToString() {
 
-        String s = this.getAmount() + " " + this.getDate() + " " + this.getDescription() + " " + this.getCategory();
+        String s = "[amount: " + this.getAmount() + "] [type: " + this.getType() +
+                "] [date: " + CustomDate.toCustomDateFromMillis(this.getDate()) + "] [category: " +
+                this.getCategory() + "] [description: " + this.getDescription();
         return s;
     }
 
     @Override
-    public int compareTo(CashTransaction cashTransaction) {
-        if(this.getDate() - cashTransaction.getDate() > 0){
+    public int compareTo(CashTransact cashTransact) {
+        if(this.getDate() - cashTransact.getDate() > 0){
             return 1;
-        }if (this.getDate() - cashTransaction.getDate() < 0) {
+        }if (this.getDate() - cashTransact.getDate() < 0) {
             return -1;
         }else {
             return 0;
         }
     }
 
-    public static Comparator<CashTransaction> CashComparator = new Comparator<CashTransaction>() {
+    public static Comparator<CashTransact> CashComparator = new Comparator<CashTransact>() {
 
         @Override
-        public int compare(CashTransaction cashTransactionOne, CashTransaction cashTransactionTwo) {
-            if(cashTransactionOne.getDate() - cashTransactionTwo.getDate() > 0){
+        public int compare(CashTransact cashTransactOne, CashTransact cashTransactTwo) {
+            if(cashTransactOne.getDate() - cashTransactTwo.getDate() > 0){
                 return 1;
-            }if (cashTransactionOne.getDate() - cashTransactionTwo.getDate() < 0) {
+            }if (cashTransactOne.getDate() - cashTransactTwo.getDate() < 0) {
                 return -1;
             }else {
                 return 0;

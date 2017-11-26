@@ -4,46 +4,47 @@
   "_note3": "If you have VCS merge conflicts, you must resolve them according to ObjectBox docs.",
   "entities": [
     {
-      "id": "2:6499621085453030273",
-      "lastPropertyId": "6:451912751102482540",
-      "name": "CashTransaction",
+      "id": "3:3893793301054112054",
+      "lastPropertyId": "6:1201696912744491985",
+      "name": "CashTransact",
       "properties": [
         {
-          "id": "1:1794632974432419290",
+          "id": "1:4722586640315701221",
           "name": "id"
         },
         {
-          "id": "2:7578927134282520829",
+          "id": "2:3167930423109141903",
           "name": "amount"
         },
         {
-          "id": "3:1512224769188775620",
+          "id": "3:6701372149851137145",
           "name": "type"
         },
         {
-          "id": "4:1958566117867738432",
+          "id": "4:1363450801874029635",
           "name": "date"
         },
         {
-          "id": "5:8987646013958042114",
+          "id": "5:28429095343782195",
           "name": "category"
         },
         {
-          "id": "6:451912751102482540",
+          "id": "6:1201696912744491985",
           "name": "description"
         }
       ],
       "relations": []
     }
   ],
-  "lastEntityId": "2:6499621085453030273",
+  "lastEntityId": "3:3893793301054112054",
   "lastIndexId": "0:0",
   "lastRelationId": "0:0",
   "lastSequenceId": "0:0",
   "modelVersion": 4,
   "modelVersionParserMinimum": 4,
   "retiredEntityUids": [
-    1759018508949266753
+    1759018508949266753,
+    6499621085453030273
   ],
   "retiredIndexUids": [],
   "retiredPropertyUids": [
@@ -52,7 +53,13 @@
     3949818113106991347,
     4697961532108893891,
     5840799166040081236,
-    7088201098315636974
+    7088201098315636974,
+    1794632974432419290,
+    7578927134282520829,
+    1512224769188775620,
+    1958566117867738432,
+    8987646013958042114,
+    451912751102482540
   ],
   "retiredRelationUids": [],
   "version": 1

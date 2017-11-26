@@ -20,8 +20,8 @@ import android.widget.Toast;
 import com.araragi.cashflow.CashFlowApp;
 import com.araragi.cashflow.R;
 import com.araragi.cashflow.adapters.AdapterCashRecyclerView;
-import com.araragi.cashflow.entity.CashTransaction;
-import com.araragi.cashflow.entity.CashTransaction_;
+import com.araragi.cashflow.entity.CashTransact;
+import com.araragi.cashflow.entity.CashTransact_;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,14 +41,15 @@ public class RecyclerViewCashFragment extends Fragment implements AdapterCashRec
     protected RecyclerView mRecyclerView;
     protected AdapterCashRecyclerView mAdapter;
     protected LinearLayoutManager mLayoutManager;
-    protected ArrayList<CashTransaction> dataSet;
+    protected ArrayList<CashTransact> dataSet;
 
-    private CashTransaction cashTransactionDeleted;
+    private CashTransact cashTransactDeleted;
+    private int positionTransactDeleted;
 
-    private AdapterCashRecyclerView.OnItemClickListener listener;
+//    private AdapterCashRecyclerView.OnItemClickListener listener;
 
-    private Box<CashTransaction> cashBox;
-    private Query<CashTransaction> cashMoneyQuery;
+    private Box<CashTransact> cashBox;
+    private Query<CashTransact> cashMoneyQuery;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -102,7 +103,6 @@ public class RecyclerViewCashFragment extends Fragment implements AdapterCashRec
         imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
     }
 
-    //
 //    @Override
 //    public void onResume() {
 //
@@ -119,19 +119,13 @@ public class RecyclerViewCashFragment extends Fragment implements AdapterCashRec
     private void initDataSet() {
 
         BoxStore boxStore =((CashFlowApp)getActivity().getApplication()).getBoxStore();
-        cashBox = boxStore.boxFor(CashTransaction.class);
-        cashMoneyQuery = cashBox.query().orderDesc(CashTransaction_.date).build();
-        List<CashTransaction> transactionList = cashMoneyQuery.find();
-        dataSet = new ArrayList<CashTransaction>(transactionList);
+        cashBox = boxStore.boxFor(CashTransact.class);
+        cashMoneyQuery = cashBox.query().orderDesc(CashTransact_.date).build();
+        List<CashTransact> transactionList = cashMoneyQuery.find();
+        dataSet = new ArrayList<CashTransact>(transactionList);
 
     }
-    private void resetDataset(){
 
-        cashMoneyQuery = cashBox.query().orderDesc(CashTransaction_.date).build();
-        List<CashTransaction> transactionList = cashMoneyQuery.find();
-        dataSet = new ArrayList<CashTransaction>(transactionList);
-        mAdapter.notifyDataSetChanged();
-    }
 
 
     private class TouchHelperCallback extends ItemTouchHelper.SimpleCallback {
@@ -148,14 +142,16 @@ public class RecyclerViewCashFragment extends Fragment implements AdapterCashRec
         @Override
         public void onSwiped(final RecyclerView.ViewHolder viewHolder, int direction) {
             int position = viewHolder.getAdapterPosition();
-            CashTransaction transaction = dataSet.get(position);
-            cashTransactionDeleted = transaction;
+            positionTransactDeleted = position;
+            CashTransact transaction = dataSet.get(position);
+            cashTransactDeleted = transaction;
+
+
             dataSet.remove(position);
             cashBox.remove(transaction);
             mAdapter.notifyItemRemoved(position);
 
-
-            Snackbar.make(mRecyclerView, "Element deleted", Snackbar.LENGTH_LONG)
+            Snackbar.make(mRecyclerView, "Transaction deleted", Snackbar.LENGTH_LONG)
                     .setAction("UNDO", new SnackBarUndoListener()).show();
 
         }
@@ -172,9 +168,13 @@ public class RecyclerViewCashFragment extends Fragment implements AdapterCashRec
         public void onClick(View v) {
 
 
-            if(cashTransactionDeleted!=null){
-                cashBox.put(cashTransactionDeleted);
-                resetDataset();
+            if(cashTransactDeleted != null){
+                cashTransactDeleted.setId(0);
+                long idAdded = cashBox.put(cashTransactDeleted);
+                dataSet.add(positionTransactDeleted, cashTransactDeleted);
+
+                mAdapter.notifyDataSetChanged();
+
                 Toast.makeText(getActivity(), "Deletion undone", Toast.LENGTH_SHORT).show();
             }else{
                 Toast.makeText(getActivity(), "Transaction object null", Toast.LENGTH_SHORT).show();}
@@ -183,10 +183,12 @@ public class RecyclerViewCashFragment extends Fragment implements AdapterCashRec
         }
     }
 
+
+
     @Override
     public void onItemClicked(View v, int position) {
 
-        CashTransaction transaction = dataSet.get(position);
+        CashTransact transaction = dataSet.get(position);
         Log.i("recycler on click", "----on click: -----" + transaction.customToString());
 
         DialogFragment transactionDetailsFragment = new TransactionDetailsDialogFragment();
