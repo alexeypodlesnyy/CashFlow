@@ -34,9 +34,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
-import io.objectbox.Box;
-import io.objectbox.BoxStore;
-import io.objectbox.query.Query;
 
 /**
  * Created by Araragi on 2017-09-14.
@@ -66,8 +63,8 @@ public class NewCashTransactionFragment extends Fragment implements DatePickerDi
 
     private static final int MAX_LENGTH_DESCRIPTION = 500;
 
-    private Box<CashTransact> cashBox;
-    private Query<CashTransact> cashMoneyQuery;
+
+ //   private Query<CashTransact> cashMoneyQuery;
 
 
 
@@ -79,27 +76,44 @@ public class NewCashTransactionFragment extends Fragment implements DatePickerDi
         View view = inflater.inflate(R.layout.frgmt_add_new_transact, container, false);
         unbinder = ButterKnife.bind(this, view);
 
-        BoxStore boxStore =((CashFlowApp)getActivity().getApplication()).getBoxStore();
-        cashBox = boxStore.boxFor(CashTransact.class);
+
+ //       BoxStore boxStore =((CashFlowApp)getActivity().getApplication()).getBoxStore();
+ //       Box<CashTransact> cashBox = boxStore.boxFor(CashTransact.class);
 
 
         return view;
     }
 
     @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        if(savedInstanceState != null){
+            dateInMillis = savedInstanceState.getLong("dateInMillis");
+        }
+    }
+
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putLong("dateInMillis", dateInMillis);
+    }
+
+    @Override
     public void onStart() {
         super.onStart();
 
-        Calendar c = Calendar.getInstance();
+        if(dateInMillis==0){
+            Calendar c = Calendar.getInstance();
 
-        dateInMillis = c.getTimeInMillis();
+            dateInMillis = c.getTimeInMillis();
 
-        int mYear = c.get(Calendar.YEAR);
-        int mMonth = c.get(Calendar.MONTH);
-        int mDay = c.get(Calendar.DAY_OF_MONTH);
+        }
 
-        editDate.setText(CustomDate.toCustomDate(mDay,mMonth, mYear));
 
+        editDate.setText(CustomDate.toCustomDateFromMillis(dateInMillis));
 
         adapterExpense = ArrayAdapter.createFromResource(getActivity(), R.array.categories_expense,
                 android.R.layout.simple_spinner_item);
@@ -177,17 +191,18 @@ public class NewCashTransactionFragment extends Fragment implements DatePickerDi
             }
             amount.setText("");
             description.setText("");
+            spinnerCategory.setSelection(0);
 
             Calendar c = Calendar.getInstance();
 
             editDate.setText(CustomDate.toCustomDateFromMillis(c.getTimeInMillis()));
 
         }
-        cashMoneyQuery = ((MainActivity) getActivity()).cashBox.query().build();
-        List<CashTransact> moneys = cashMoneyQuery.find();
-        for (CashTransact money : moneys) {
-            Log.i("main", money.getDescription() + " " + money.getAmount() + " " + money.getId());
-        }
+//        cashMoneyQuery = ((MainActivity) getActivity()).cashBox.query().build();
+//        List<CashTransact> moneys = cashMoneyQuery.find();
+//        for (CashTransact money : moneys) {
+//            Log.i("main", money.getDescription() + " " + money.getAmount() + " " + money.getId());
+//        }
 
     }
 
@@ -199,7 +214,7 @@ public class NewCashTransactionFragment extends Fragment implements DatePickerDi
             String s = "";
             try {
                 s = amount.getText().toString();
-                if(s.equals("") || s.equals(null)){
+                if(s.equals("")){
                         Toast.makeText(getActivity(), "Amount can not be empty", Toast.LENGTH_SHORT).show();
                     return null;
                 }else{

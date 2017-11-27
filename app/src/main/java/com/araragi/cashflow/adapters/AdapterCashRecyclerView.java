@@ -126,7 +126,7 @@ public class AdapterCashRecyclerView extends RecyclerView.Adapter<AdapterCashRec
         viewHolder.getTextAmount().setText(cashTransact.getAmount());
         viewHolder.getImage()
                 .setImageResource(cashTransact.getType()== CashTransact.TYPE_INCOME?
-                R.mipmap.plus_sign:R.mipmap.minus_sign);
+                R.mipmap.income_pict:R.mipmap.expense_pict);
 
     }
 

@@ -45,6 +45,13 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        if(savedInstanceState != null){
+
+                newCashTransactionFragment = (NewCashTransactionFragment) getSupportFragmentManager().
+                        getFragment(savedInstanceState, NewCashTransactionFragment.TAG);
+        }
+
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -112,6 +119,13 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        getSupportFragmentManager().putFragment(outState, "myFragmentName", newCashTransactionFragment);
+    }
 
     @Override
     public void onBackPressed() {

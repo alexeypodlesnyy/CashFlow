@@ -80,9 +80,9 @@ public class RecyclerViewCashFragment extends Fragment implements AdapterCashRec
         ItemTouchHelper touchHelper = new ItemTouchHelper(touchHelperCallback);
         touchHelper.attachToRecyclerView(mRecyclerView);
 
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(mRecyclerView.getContext(),
-                mLayoutManager.getOrientation());
-        mRecyclerView.addItemDecoration(dividerItemDecoration);
+//        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(mRecyclerView.getContext(),
+//                mLayoutManager.getOrientation());
+//        mRecyclerView.addItemDecoration(dividerItemDecoration);
 
 
         return rootView;

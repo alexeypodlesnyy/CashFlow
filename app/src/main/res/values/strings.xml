@@ -19,5 +19,5 @@
     <string name="txt_stat_balance">Balance</string>
     <string name="save_btn_actionbar">SAVE</string>
     <string name="btn_save_data_to_file">Save transactions as .txt file</string>
-    <string name="text_under_save_to_storage_btn">If you click this button, all your trnsaction will be saved as .txt file to your Sd card, folder \"Documents\"</string>
+    <string name="text_under_save_to_storage_btn">If you click this button, all your transactions will be saved as .txt file to your SD card"</string>
 </resources>
