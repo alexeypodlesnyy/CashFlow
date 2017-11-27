@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"></LinearLayout>
+
+    <Button
+        android:text="@string/btn_save_data_to_file"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/btn_save_to_file"
+        android:elevation="4dp"
+        android:textColor="@color/cardview_light_background"
+        android:background="@color/colorPrimary" />
+
+    <TextView
+        android:text="@string/text_under_save_to_storage_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/txt_under_save_to_sd_btn" />
+</LinearLayout>
