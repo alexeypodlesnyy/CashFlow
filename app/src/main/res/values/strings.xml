@@ -18,6 +18,6 @@
     <string name="txt_stat_expenxse_total">Expense total</string>
     <string name="txt_stat_balance">Balance</string>
     <string name="save_btn_actionbar">SAVE</string>
-    <string name="btn_save_data_to_file">Save transactions as .txt file</string>
-    <string name="text_under_save_to_storage_btn">If you click this button, all your transactions will be saved as .txt file to your SD card"</string>
+    <string name="btn_save_data_to_file">Copy as .txt</string>
+    <string name="text_under_save_to_storage_btn">Click this button to save all your transactions as .txt file to your local storage, directory "Documents"</string>
 </resources>

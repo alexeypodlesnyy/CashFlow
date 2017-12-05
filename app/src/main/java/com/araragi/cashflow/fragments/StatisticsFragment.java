@@ -146,19 +146,7 @@ public class StatisticsFragment extends Fragment {
         textExpenseTotalAmount.setText("0");
         textBalanceAmount.setText("0");
     }
-//
-//    public void onDateSet(DatePicker view, int year, int month, int day) {
-//
-//        Calendar calendar = Calendar.getInstance();
-//        calendar.set(year,month,day,12, 12,12);
-//        long dateInMillis = calendar.getTimeInMillis();
-//
-//        //editDate.setText(CustomDate.toCustomDateFromMillis(dateInMillis));
-//
-//        Log.i("onDateSet", "----long millis set manually = " + dateInMillis);
-//
-//
-//    }
+
 
 
 }

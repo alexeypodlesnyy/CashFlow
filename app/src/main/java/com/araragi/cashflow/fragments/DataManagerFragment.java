@@ -140,14 +140,11 @@ public class DataManagerFragment extends Fragment {
 
                     } else {
 
-                        // permission denied, boo! Disable the
-                        // functionality that depends on this permission.
                     }
                     return;
                 }
 
-                // other 'case' lines to check for other
-                // permissions this app might request
+
             }
         }
 
@@ -156,7 +153,7 @@ public class DataManagerFragment extends Fragment {
         if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 == PackageManager.PERMISSION_GRANTED) {
 
-            FileSaver fileSaver = new FileSaver(dataSet, getContext());
+            FileSaver fileSaver = new FileSaver(dataSet);
 
             String filePath = fileSaver.writeCashTransactionsToSD();
             if(filePath.equals("")){
@@ -168,10 +165,10 @@ public class DataManagerFragment extends Fragment {
 
 
         } else {
-            // Permission is missing and must be requested.
+
             checkPermission();
         }
-        // END_INCLUDE(startCamera)
+
     }
 
 

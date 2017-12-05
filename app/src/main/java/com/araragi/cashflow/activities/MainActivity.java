@@ -31,7 +31,6 @@ public class MainActivity extends AppCompatActivity
 
     public Box<CashTransact> cashBox;
 
-    private Query<CashTransact> cashMoneyQuery;
     private FragmentManager fragmentManager;
     private FragmentTransaction fragmentTransaction;
 
@@ -66,20 +65,6 @@ public class MainActivity extends AppCompatActivity
 
         BoxStore boxStore = ((CashFlowApp) getApplication()).getBoxStore();
         cashBox = boxStore.boxFor(CashTransact.class);
-
-//        ArrayList<CashTransact> testArray = new ArrayList<>();
-//
-//        long timeStart = SystemClock.currentThreadTimeMillis();
-//        for(int i = 0; i < 100000; i++){
-//            CashTransact transaction = new CashTransact(i+"", 1, 15000000, "other", "");
-//            testArray.add(transaction);
-//        }
-//        Log.i("main", "---time for creating test data = " + (SystemClock.currentThreadTimeMillis() - timeStart));
-//
-//        long timeStart2 = SystemClock.currentThreadTimeMillis();
-//        cashBox.put(testArray);
-//        Log.i("main", "---time for adding test data to DB = " + (SystemClock.currentThreadTimeMillis() - timeStart));
-
 
 
         newCashTransactionFragment = new NewCashTransactionFragment();

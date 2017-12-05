@@ -64,18 +64,6 @@ public class AdapterCashRecyclerView extends RecyclerView.Adapter<AdapterCashRec
             image = (ImageView)v.findViewById(R.id.item_image_plus);
 
 
-//            v.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//
-//                    int position = getAdapterPosition();
-//                    CashTransact cashTransaction = mDataSet.get(position);
-//                    Log.v("adapter","--- Transaction clicked: " + cashTransaction.customToString());
-//                    Toast.makeText(v.getContext(), cashTransaction.customToString(), Toast.LENGTH_SHORT).show();
-//
-//                }
-//            });
-
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -116,7 +104,7 @@ public class AdapterCashRecyclerView extends RecyclerView.Adapter<AdapterCashRec
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
-       // Log.d(TAG, "Element " + position + " set.");
+
         CashTransact cashTransact = mDataSet.get(position);
         viewHolder.getTextCategory().setText(cashTransact.getCategory());
         long millis = cashTransact.getDate();

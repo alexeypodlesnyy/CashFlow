@@ -12,6 +12,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -44,6 +45,7 @@ public class NewCashTransactionFragment extends Fragment implements DatePickerDi
     public final  static String TAG = "NewCashTransactionFragment";
 
     private long dateInMillis;
+    private int spinnerPositionNumber;
 
 
     @BindView(R.id.edit_date)public TextView editDate;
@@ -62,7 +64,8 @@ public class NewCashTransactionFragment extends Fragment implements DatePickerDi
 
 
     private static final int MAX_LENGTH_DESCRIPTION = 500;
-
+    private static final String KEY_SPINNER_CURRENT_POSITION_NUMBER = "spinnerCurrentPositionNumber";
+    private static final String KEY_CURRENT_DATE_SET_IN_DATE_FIELD = "currentDateInMillis";
 
  //   private Query<CashTransact> cashMoneyQuery;
 
@@ -89,7 +92,10 @@ public class NewCashTransactionFragment extends Fragment implements DatePickerDi
         super.onActivityCreated(savedInstanceState);
 
         if(savedInstanceState != null){
-            dateInMillis = savedInstanceState.getLong("dateInMillis");
+            dateInMillis = savedInstanceState.getLong(KEY_CURRENT_DATE_SET_IN_DATE_FIELD);
+
+            spinnerPositionNumber = savedInstanceState.getInt(KEY_SPINNER_CURRENT_POSITION_NUMBER);
+
         }
     }
 
@@ -98,18 +104,25 @@ public class NewCashTransactionFragment extends Fragment implements DatePickerDi
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        outState.putLong("dateInMillis", dateInMillis);
+        outState.putLong(KEY_CURRENT_DATE_SET_IN_DATE_FIELD, dateInMillis);
+        Log.e("main", "--- spinner position number = " + spinnerPositionNumber);
+        outState.putInt(KEY_SPINNER_CURRENT_POSITION_NUMBER, spinnerPositionNumber);
     }
 
     @Override
     public void onStart() {
         super.onStart();
 
+        setViewData();
+
+
+    }
+
+    protected void setViewData(){
+
         if(dateInMillis==0){
             Calendar c = Calendar.getInstance();
-
             dateInMillis = c.getTimeInMillis();
-
         }
 
 
@@ -117,17 +130,38 @@ public class NewCashTransactionFragment extends Fragment implements DatePickerDi
 
         adapterExpense = ArrayAdapter.createFromResource(getActivity(), R.array.categories_expense,
                 android.R.layout.simple_spinner_item);
-
         adapterIncome = ArrayAdapter.createFromResource(getActivity(), R.array.categories_income,
                 android.R.layout.simple_spinner_item);
 
         adapterExpense.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         adapterIncome.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-        spinnerCategory.setAdapter(adapterExpense);
 
+        if(expenseRadioBtn.isChecked()){
+            spinnerCategory.setAdapter(adapterExpense);
+            spinnerCategory.setSelection(spinnerPositionNumber);
+        }else{
+            spinnerCategory.setAdapter(adapterIncome);
+            spinnerCategory.setSelection(spinnerPositionNumber);
+        }
+
+        spinnerCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                Log.e("main", "--- spinner position = " + position);
+                spinnerPositionNumber = position;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                spinnerPositionNumber = 0;
+            }
+
+        });
 
     }
+
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
         menu.clear();
@@ -166,13 +200,17 @@ public class NewCashTransactionFragment extends Fragment implements DatePickerDi
             case R.id.radio_btn_expense:
                 if (checked)
                     spinnerCategory.setAdapter(adapterExpense);
+
                 break;
             case R.id.radio_btn_income:
                 if (checked)
                     spinnerCategory.setAdapter(adapterIncome);
+
                 break;
         }
     }
+
+
 
 
 
@@ -198,11 +236,6 @@ public class NewCashTransactionFragment extends Fragment implements DatePickerDi
             editDate.setText(CustomDate.toCustomDateFromMillis(c.getTimeInMillis()));
 
         }
-//        cashMoneyQuery = ((MainActivity) getActivity()).cashBox.query().build();
-//        List<CashTransact> moneys = cashMoneyQuery.find();
-//        for (CashTransact money : moneys) {
-//            Log.i("main", money.getDescription() + " " + money.getAmount() + " " + money.getId());
-//        }
 
     }
 
@@ -271,8 +304,6 @@ public class NewCashTransactionFragment extends Fragment implements DatePickerDi
         dateInMillis = calendar.getTimeInMillis();
 
         editDate.setText(CustomDate.toCustomDateFromMillis(dateInMillis));
-
-        Log.i("onDateSet", "----long millis set manually = " + dateInMillis);
 
 
     }

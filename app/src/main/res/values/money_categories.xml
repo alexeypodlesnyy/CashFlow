@@ -4,11 +4,13 @@
     <string-array name="categories_expense">
 
 
-        <item>Other</item>
-        <item>Phone</item>
-        <item>TV/I-net</item>
-        <item>Rent</item>
         <item>Food</item>
+        <item>Phone</item>
+        <item>I-net</item>
+        <item>Rent</item>
+        <item>Eating out</item>
+        <item>Transport</item>
+        <item>Other</item>
 
     </string-array>
 

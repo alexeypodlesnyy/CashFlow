@@ -71,17 +71,10 @@ public class TransactionDetailsDialogFragment extends DialogFragment {
         builder.setMessage(message)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        // FIRE ZE MISSILES!
+
                     }
                 });
-//                .setNegativeButton("blyad", new DialogInterface.OnClickListener() {
-//                    public void onClick(DialogInterface dialog, int id) {
-//                        // User cancelled the dialog
-//                    }
-//                })
 
-
-        // Create the AlertDialog object and return it
         return builder.create();
     }
 

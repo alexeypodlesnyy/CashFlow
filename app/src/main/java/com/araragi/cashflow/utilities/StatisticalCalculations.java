@@ -35,9 +35,6 @@ public class StatisticalCalculations {
         return cashTransacts;
     }
 
-//    public void setCashTransactions(ArrayList<CashTransact> cashTransacts) {
-//        this.cashTransacts = cashTransacts;
-//    }
 
     public boolean calculate(){
 

@@ -1,8 +1,5 @@
 package com.araragi.cashflow.entity;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 import java.util.Comparator;
 
 import io.objectbox.annotation.Entity;
@@ -87,14 +84,13 @@ public class CashTransact implements Comparable<CashTransact>{
 
     public String customToString() {
 
-        GsonBuilder builder = new GsonBuilder();
-        Gson gson = builder.create();
-        String json = gson.toJson(this);
 
-//        String s = "[amount:" + this.getAmount() + "] [type: " + this.getType() +
-//                "] [date: " + CustomDate.toCustomDateFromMillis(this.getDate()) + "] [category: " +
-//                this.getCategory() + "] [description: " + this.getDescription();
-        return json;
+        String type = (this.getType()==TYPE_EXPENSE?"Expense":"Income");
+        String s = ">> " + type + "; " + this.getAmount()  +
+                "; " + CustomDate.toCustomDateFromMillis(this.getDate()) + "; " +
+                this.getCategory() + "; " + this.getDescription() + "<<";
+
+        return s;
     }
 
 

@@ -80,10 +80,7 @@ public class RecyclerViewCashFragment extends Fragment implements AdapterCashRec
         ItemTouchHelper touchHelper = new ItemTouchHelper(touchHelperCallback);
         touchHelper.attachToRecyclerView(mRecyclerView);
 
-//        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(mRecyclerView.getContext(),
-//                mLayoutManager.getOrientation());
-//        mRecyclerView.addItemDecoration(dividerItemDecoration);
-
+        Toast.makeText(getActivity(), "Swipe to delete", Toast.LENGTH_SHORT).show();
 
         return rootView;
     }
@@ -103,18 +100,6 @@ public class RecyclerViewCashFragment extends Fragment implements AdapterCashRec
         imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
     }
 
-//    @Override
-//    public void onResume() {
-//
-//        super.onResume();
-//    }
-//
-//    @Override
-//    public void onAttach(Context context) {
-//        initDataSet();
-//        mAdapter.notifyDataSetChanged();
-//        super.onAttach(context);
-//    }
 
     private void initDataSet() {
 
