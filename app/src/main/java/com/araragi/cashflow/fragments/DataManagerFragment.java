@@ -121,8 +121,7 @@ public class DataManagerFragment extends Fragment {
             ActivityCompat.requestPermissions(getActivity(),
                     new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                     PERMISSION_TO_WRITE_TO_SD);
-//
-//            }
+
         }
 
 

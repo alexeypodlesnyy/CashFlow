@@ -18,7 +18,7 @@ import io.objectbox.BoxStore;
  * Created by Araragi on 2017-11-06.
  */
 
-public class TransactionDetailsDialogFragment extends DialogFragment {
+public class TransactionDetailsDialogFragment extends DialogFragment{
 
     public static final String TAG = "TransactionDetailsDialogFragment";
 
@@ -73,10 +73,18 @@ public class TransactionDetailsDialogFragment extends DialogFragment {
                     public void onClick(DialogInterface dialog, int id) {
 
                     }
-                });
+                })
+//                .setNegativeButton("DELETE",  new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface dialog, int id) {
+//
+//                    }
+//                })
+        ;
 
         return builder.create();
     }
+
+
 
 
 }

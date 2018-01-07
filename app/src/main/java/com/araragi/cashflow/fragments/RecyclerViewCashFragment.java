@@ -6,7 +6,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -24,11 +23,13 @@ import com.araragi.cashflow.entity.CashTransact;
 import com.araragi.cashflow.entity.CashTransact_;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import io.objectbox.Box;
 import io.objectbox.BoxStore;
 import io.objectbox.query.Query;
+
 
 /**
  * Created by Araragi on 2017-09-20.
@@ -108,6 +109,10 @@ public class RecyclerViewCashFragment extends Fragment implements AdapterCashRec
         cashMoneyQuery = cashBox.query().orderDesc(CashTransact_.date).build();
         List<CashTransact> transactionList = cashMoneyQuery.find();
         dataSet = new ArrayList<CashTransact>(transactionList);
+        Collections.sort(dataSet);
+
+
+
 
     }
 

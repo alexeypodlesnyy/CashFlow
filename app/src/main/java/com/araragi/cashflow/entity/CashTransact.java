@@ -1,5 +1,7 @@
 package com.araragi.cashflow.entity;
 
+import android.util.Log;
+
 import java.util.Comparator;
 
 import io.objectbox.annotation.Entity;
@@ -97,28 +99,45 @@ public class CashTransact implements Comparable<CashTransact>{
 
     @Override
     public int compareTo(CashTransact cashTransact) {
-        if(this.getDate() - cashTransact.getDate() > 0){
+        if(this.getDate() - cashTransact.getDate() < 0){
+            Log.i("cashTransact", "---- compareTo date returned 1----");
             return 1;
-        }if (this.getDate() - cashTransact.getDate() < 0) {
+        }if (this.getDate() - cashTransact.getDate() > 0) {
+            Log.i("cashTransact", "---- compareTo date returned -1 ----");
             return -1;
         }else {
-            return 0;
-        }
-    }
-
-    public static Comparator<CashTransact> CashComparator = new Comparator<CashTransact>() {
-
-        @Override
-        public int compare(CashTransact cashTransactOne, CashTransact cashTransactTwo) {
-            if(cashTransactOne.getDate() - cashTransactTwo.getDate() > 0){
+            if(this.getId() - cashTransact.getId() < 0){
+                Log.i("cashTransact", "---- compareTo id returned 1----");
                 return 1;
-            }if (cashTransactOne.getDate() - cashTransactTwo.getDate() < 0) {
-                return -1;
-            }else {
+            }if (this.getId() - cashTransact.getId() > 0) {
+                Log.i("cashTransact", "---- compareTo id returned -1----");
+                return -1;}
+            else{
+                Log.i("cashTransact", "---- compareTo returned 0----");
                 return 0;
             }
         }
-    };
+    }
+//
+//    public static Comparator<CashTransact> CashComparator = new Comparator<CashTransact>() {
+//
+//        @Override
+//        public int compare(CashTransact cashTransactOne, CashTransact cashTransactTwo) {
+//            if(cashTransactOne.getDate() - cashTransactTwo.getDate() > 0){
+//                Log.i("cashTransact", "---- Comparator returned 1----");
+//                return 1;
+//            }if (cashTransactOne.getDate() - cashTransactTwo.getDate() < 0) {
+//                Log.i("cashTransact", "---- Comparator returned -1 ----");
+//                return -1;
+//            }else {
+//                Log.i("cashTransact", "---- Comparator returned 0----");
+//                return 0;
+//            }
+//        }
+//    };
+
+
+
 
 
 }

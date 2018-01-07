@@ -1,5 +1,8 @@
 package com.araragi.cashflow.activities;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -38,6 +41,7 @@ public class MainActivity extends AppCompatActivity
     public RecyclerViewCashFragment listFragment;
     public StatisticsFragment statFragment;
     public DataManagerFragment dataManagerFragment;
+
 
 
     @Override
@@ -107,9 +111,11 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
 
         getSupportFragmentManager().putFragment(outState, "myFragmentName", newCashTransactionFragment);
+        super.onSaveInstanceState(outState);
+
+
     }
 
     @Override
@@ -141,6 +147,10 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.nav_database:
                 onDatabaseClicked();
+                break;
+
+            case R.id.nav_privacy:
+                onPrivacyClicked();
                 break;
         }
 
@@ -187,6 +197,12 @@ public class MainActivity extends AppCompatActivity
         fragmentTransaction.replace(R.id.fragments_container, statFragment);
         fragmentTransaction.addToBackStack(StatisticsFragment.TAG);
         fragmentTransaction.commit();
+
+    }
+    public void onPrivacyClicked(){
+
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://sites.google.com/view/alexey-dev/privacy-policy"));
+        startActivity(browserIntent);
 
     }
 
