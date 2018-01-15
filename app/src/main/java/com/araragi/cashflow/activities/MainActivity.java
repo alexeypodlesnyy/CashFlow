@@ -49,11 +49,12 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if(savedInstanceState != null){
-
-                newCashTransactionFragment = (NewCashTransactionFragment) getSupportFragmentManager().
-                        getFragment(savedInstanceState, NewCashTransactionFragment.TAG);
-        }
+//        if(savedInstanceState != null){
+//
+//
+//            newCashTransactionFragment = (NewCashTransactionFragment) getSupportFragmentManager().
+//                        getFragment(savedInstanceState, NewCashTransactionFragment.TAG);
+//        }
 
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -70,15 +71,16 @@ public class MainActivity extends AppCompatActivity
         BoxStore boxStore = ((CashFlowApp) getApplication()).getBoxStore();
         cashBox = boxStore.boxFor(CashTransact.class);
 
-
-        newCashTransactionFragment = new NewCashTransactionFragment();
-
         fragmentManager = getSupportFragmentManager();
-        fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.add(R.id.fragments_container, newCashTransactionFragment, newCashTransactionFragment.TAG);
-        fragmentTransaction.addToBackStack(newCashTransactionFragment.TAG);
-        fragmentTransaction.commit();
+        if(savedInstanceState == null) {
+            newCashTransactionFragment = new NewCashTransactionFragment();
 
+ //           fragmentManager = getSupportFragmentManager();
+            fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.add(R.id.fragments_container, newCashTransactionFragment, newCashTransactionFragment.TAG);
+            fragmentTransaction.addToBackStack(newCashTransactionFragment.TAG);
+            fragmentTransaction.commit();
+        }
         fragmentManager.addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
             @Override
             public void onBackStackChanged() {
@@ -107,16 +109,18 @@ public class MainActivity extends AppCompatActivity
 
 
     }
-
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-
-        getSupportFragmentManager().putFragment(outState, "myFragmentName", newCashTransactionFragment);
-        super.onSaveInstanceState(outState);
-
-
-    }
+//    @Override
+//    protected void onSaveInstanceState(Bundle outState) {
+//
+//        getSupportFragmentManager().putFragment(outState, "myFragmentName", newCashTransactionFragment);
+//        outState.putString("Last fragment", );
+//
+//        super.onSaveInstanceState(outState);
+//
+//
+//
+//
+//    }
 
     @Override
     public void onBackPressed() {
@@ -172,6 +176,7 @@ public class MainActivity extends AppCompatActivity
     }
     public void onAddNewClicked() {
 
+        newCashTransactionFragment = new NewCashTransactionFragment();
         fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.fragments_container, newCashTransactionFragment);
         fragmentTransaction.addToBackStack(NewCashTransactionFragment.TAG);
