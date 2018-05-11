@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.araragi.cashflow.CashFlowApp;
 import com.araragi.cashflow.R;
+import com.araragi.cashflow.activities.MainActivity;
 import com.araragi.cashflow.entity.CashTransact;
 import com.araragi.cashflow.entity.CashTransact_;
 import com.araragi.cashflow.utilities.FileSaver;
@@ -66,6 +67,8 @@ public class DataManagerFragment extends Fragment {
 
         final InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
+
+       // ((MainActivity)getActivity()).setToolbarTitle("Database");
     }
 
     @Nullable

@@ -99,17 +99,17 @@ public class CashTransact implements Comparable<CashTransact>{
 
     @Override
     public int compareTo(CashTransact cashTransact) {
-        if(this.getDate() - cashTransact.getDate() < 0){
+        if(this.getDate() - cashTransact.getDate() > 0){
             Log.i("cashTransact", "---- compareTo date returned 1----");
             return 1;
-        }if (this.getDate() - cashTransact.getDate() > 0) {
+        }if (this.getDate() - cashTransact.getDate() < 0) {
             Log.i("cashTransact", "---- compareTo date returned -1 ----");
             return -1;
         }else {
-            if(this.getId() - cashTransact.getId() < 0){
+            if(this.getId() - cashTransact.getId() > 0){
                 Log.i("cashTransact", "---- compareTo id returned 1----");
                 return 1;
-            }if (this.getId() - cashTransact.getId() > 0) {
+            }if (this.getId() - cashTransact.getId() < 0) {
                 Log.i("cashTransact", "---- compareTo id returned -1----");
                 return -1;}
             else{

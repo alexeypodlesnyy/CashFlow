@@ -43,6 +43,7 @@ import butterknife.Unbinder;
 public class NewCashTransactionFragment extends Fragment implements DatePickerDialog.OnDateSetListener{
 
     public final  static String TAG = "NewCashTransactionFragment";
+    public final static int ADD_NEW_TRANSACT_FRAGMENT_REQUEST_CODE = 100;
 
     private long dateInMillis;
     private int spinnerPositionNumber;
@@ -97,6 +98,7 @@ public class NewCashTransactionFragment extends Fragment implements DatePickerDi
             spinnerPositionNumber = savedInstanceState.getInt(KEY_SPINNER_CURRENT_POSITION_NUMBER);
 
         }
+        //((MainActivity)getActivity()).setToolbarTitle("Add New");
     }
 
 
@@ -105,7 +107,7 @@ public class NewCashTransactionFragment extends Fragment implements DatePickerDi
         super.onSaveInstanceState(outState);
 
         outState.putLong(KEY_CURRENT_DATE_SET_IN_DATE_FIELD, dateInMillis);
-        Log.e("main", "--- spinner position number = " + spinnerPositionNumber);
+        //Log.e("main", "--- spinner position number = " + spinnerPositionNumber);
         outState.putInt(KEY_SPINNER_CURRENT_POSITION_NUMBER, spinnerPositionNumber);
     }
 
@@ -232,8 +234,9 @@ public class NewCashTransactionFragment extends Fragment implements DatePickerDi
             spinnerCategory.setSelection(0);
 
             Calendar c = Calendar.getInstance();
+            dateInMillis = c.getTimeInMillis();
 
-            editDate.setText(CustomDate.toCustomDateFromMillis(c.getTimeInMillis()));
+            editDate.setText(CustomDate.toCustomDateFromMillis(dateInMillis));
 
         }
 
@@ -288,7 +291,7 @@ public class NewCashTransactionFragment extends Fragment implements DatePickerDi
     public void showDatePickerDialog(View v) {
 
         DialogFragment datePickerFragment = new DatePickerFragment();
-        datePickerFragment.setTargetFragment(this,1234);
+        datePickerFragment.setTargetFragment(this,ADD_NEW_TRANSACT_FRAGMENT_REQUEST_CODE);
         datePickerFragment.show(getActivity().getSupportFragmentManager(), "datePicker");
 
     }

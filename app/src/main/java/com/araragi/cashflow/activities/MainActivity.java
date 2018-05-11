@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity
     public StatisticsFragment statFragment;
     public DataManagerFragment dataManagerFragment;
 
+    private Toolbar toolbar;
 
 
     @Override
@@ -49,15 +50,22 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-//        if(savedInstanceState != null){
-//
-//
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+
+        if(savedInstanceState != null){
+
+            String title = savedInstanceState.getString("Title");
+            toolbar.setTitle(title);
+
 //            newCashTransactionFragment = (NewCashTransactionFragment) getSupportFragmentManager().
 //                        getFragment(savedInstanceState, NewCashTransactionFragment.TAG);
-//        }
 
-        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+
+        }
+
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -68,6 +76,8 @@ public class MainActivity extends AppCompatActivity
         final NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+
+
         BoxStore boxStore = ((CashFlowApp) getApplication()).getBoxStore();
         cashBox = boxStore.boxFor(CashTransact.class);
 
@@ -75,7 +85,6 @@ public class MainActivity extends AppCompatActivity
         if(savedInstanceState == null) {
             newCashTransactionFragment = new NewCashTransactionFragment();
 
- //           fragmentManager = getSupportFragmentManager();
             fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.add(R.id.fragments_container, newCashTransactionFragment, newCashTransactionFragment.TAG);
             fragmentTransaction.addToBackStack(newCashTransactionFragment.TAG);
@@ -109,18 +118,20 @@ public class MainActivity extends AppCompatActivity
 
 
     }
-//    @Override
-//    protected void onSaveInstanceState(Bundle outState) {
-//
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+
 //        getSupportFragmentManager().putFragment(outState, "myFragmentName", newCashTransactionFragment);
 //        outState.putString("Last fragment", );
-//
-//        super.onSaveInstanceState(outState);
-//
-//
-//
-//
-//    }
+
+        outState.putString("Title", toolbar.getTitle().toString());
+
+        super.onSaveInstanceState(outState);
+
+
+
+
+    }
 
     @Override
     public void onBackPressed() {
@@ -209,6 +220,10 @@ public class MainActivity extends AppCompatActivity
         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://sites.google.com/view/alexey-dev/privacy-policy"));
         startActivity(browserIntent);
 
+    }
+
+    public void setToolbarTitle(String title){
+        toolbar.setTitle(title);
     }
 
 

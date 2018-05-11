@@ -1,28 +1,36 @@
 package com.araragi.cashflow.fragments;
 
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.DatePicker;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.araragi.cashflow.CashFlowApp;
 import com.araragi.cashflow.R;
 import com.araragi.cashflow.activities.MainActivity;
 import com.araragi.cashflow.entity.CashTransact;
+import com.araragi.cashflow.entity.CashTransact_;
 import com.araragi.cashflow.entity.CustomDate;
+import com.araragi.cashflow.utilities.DateRange;
 import com.araragi.cashflow.utilities.StatisticalCalculations;
 
+import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import butterknife.Unbinder;
 import io.objectbox.Box;
 import io.objectbox.BoxStore;
@@ -32,18 +40,31 @@ import io.objectbox.query.Query;
  * Created by Araragi on 2017-09-21.
  */
 
-public class StatisticsFragment extends Fragment {
+public class StatisticsFragment extends Fragment implements DatePickerDialog.OnDateSetListener{
 
     public static final String TAG = "StatisticsFragment";
+    private static final String DATE_LAST_CLICKED = "lastDateClicked";
+    private static final int DATE_FROM_CLICKED = 1;
+    private static final int DATE_TO_CLICKED = 2;
+    public static final int STAT_FRAGMENT_REQUEST_CODE = 102;
+
+    private DateRange dateRange;
 
     private Unbinder unbinder;
+
+    private long dateFrom;
+    private long dateTo;
+
+
+
+    private int lastDateViewClicked;
 
     private Box<CashTransact> cashBox;
     private Query<CashTransact> cashMoneyQuery;
 
     private ArrayList<CashTransact> cashTransactArrayList;
 
-    private StatisticalCalculations calculations;
+   // private StatisticalCalculations calculations;
 
     @BindView(R.id.txt_from_date)public TextView textDateFrom;
     @BindView(R.id.txt_to_date)public TextView textDateTo;
@@ -57,6 +78,13 @@ public class StatisticsFragment extends Fragment {
 
 
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        dateRange = new DateRange();
+
+
+    }
 
     @Nullable
     @Override
@@ -68,6 +96,49 @@ public class StatisticsFragment extends Fragment {
         BoxStore boxStore =((CashFlowApp)getActivity().getApplication()).getBoxStore();
         cashBox = boxStore.boxFor(CashTransact.class);
 
+        if(savedInstanceState != null){
+            lastDateViewClicked = savedInstanceState.getInt(DATE_LAST_CLICKED);
+            dateTo = savedInstanceState.getLong("dateTo");
+            dateFrom = savedInstanceState.getLong("dateFrom");
+        }else{
+            setDatesRangeCurrentMonth();
+        }
+
+        setViewWithAmounts(getTransactCustomDates(dateFrom, dateTo));
+
+
+//
+//        if(cashTransactArrayList.size() > 0) {
+//
+//            if (savedInstanceState != null) {
+//
+//                lastDateViewClicked = savedInstanceState.getInt(DATE_LAST_CLICKED);
+//                dateTo = savedInstanceState.getLong("dateTo");
+//                dateFrom = savedInstanceState.getLong("dateFrom");
+//
+//            } else {
+//
+//                lastDateViewClicked = 0;
+//                CashTransact transactionMin = Collections.min(cashTransactArrayList);
+//                CashTransact transactionMax = Collections.max(cashTransactArrayList);
+//
+//                dateFrom = transactionMin.getDate();
+//                dateTo = transactionMax.getDate();
+//            }
+//            textDateFrom.setText("From: " + CustomDate.toCustomDateFromMillis(dateFrom));
+//            textDateTo.setText("To: " + CustomDate.toCustomDateFromMillis(dateTo));
+//
+//            calculations = new StatisticalCalculations(cashTransactArrayList);
+//            calculations.calculate();
+//
+//            setViewWithAmounts(calculations);
+//
+//
+//        }else{
+//            setViewIfDbEmpty();
+//        }
+
+
         return view;
     }
 
@@ -77,6 +148,8 @@ public class StatisticsFragment extends Fragment {
 
         final InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
+
+        //((MainActivity)getActivity()).setToolbarTitle("Statistics");
     }
 
     @Override
@@ -85,29 +158,20 @@ public class StatisticsFragment extends Fragment {
 
 
 
-        cashMoneyQuery = ((MainActivity) getActivity()).cashBox.query().build();
-        cashTransactArrayList = new ArrayList<>(cashMoneyQuery.find());
-
-        if(cashTransactArrayList.size() > 0) {
-            CashTransact transactionMin = Collections.min(cashTransactArrayList);
-            CashTransact transactionMax = Collections.max(cashTransactArrayList);
-
-            textDateFrom.setText("From: " + CustomDate.toCustomDateFromMillis(transactionMin.getDate()));
-            textDateTo.setText("To: " + CustomDate.toCustomDateFromMillis(transactionMax.getDate()));
-
-            calculations = new StatisticalCalculations(cashTransactArrayList);
-            calculations.calculate();
-
-            setViewWithAmounts(calculations);
-
-        }else{
-            setViewIfDbEmpty();
-        }
-
-
 
 
     }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.putInt(DATE_LAST_CLICKED, lastDateViewClicked);
+        savedInstanceState.putLong("dateFrom", dateFrom);
+        savedInstanceState.putLong("dateTo", dateTo);
+
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+
 
     @Override public void onDestroyView() {
         super.onDestroyView();
@@ -120,33 +184,122 @@ public class StatisticsFragment extends Fragment {
 
     }
 
-    private void setViewWithAmounts(StatisticalCalculations calculations){
+    private void setViewWithAmounts(ArrayList<CashTransact> cashTransacts){
 
-        textIncomeTotalAmount.setText(calculations.getTotalIncome().toString());
-        textExpenseTotalAmount.setText(calculations.getTotalExpense().toString());
-        textBalanceAmount.setText(calculations.getBalance().toString());
-        String[] categoriesIncome = calculations.getIncomeByCategoryAsStringArray();
-        String[] categoriesExpense = calculations.getExpenseByCategoryAsStringArray();
+        textDateFrom.setText(CustomDate.toCustomDateFromMillis(dateFrom));
+        textDateTo.setText(CustomDate.toCustomDateFromMillis(dateTo));
 
-        textCategoriesIncome.setText(categoriesIncome[0]);
-        textCategoriesIncomeAmounts.setText(categoriesIncome[1]);
+        if(cashTransacts.size() == 0){
+            setViewIfDbEmpty();
+        }else {
 
-        textCategoriesExpense.setText(categoriesExpense[0]);
-        textCategoriesExpenseAmounts.setText(categoriesExpense[1]);
+            StatisticalCalculations calculations = new StatisticalCalculations(cashTransacts);
+            calculations.calculate();
 
+            textIncomeTotalAmount.setText(calculations.getTotalIncome().toString());
+            textExpenseTotalAmount.setText(calculations.getTotalExpense().toString());
+            textBalanceAmount.setText(calculations.getBalance().toString());
+            String[] categoriesIncome = calculations.getIncomeByCategoryAsStringArray();
+            String[] categoriesExpense = calculations.getExpenseByCategoryAsStringArray();
+
+            textCategoriesIncome.setText(categoriesIncome[0]);
+            textCategoriesIncomeAmounts.setText(categoriesIncome[1]);
+
+            textCategoriesExpense.setText(categoriesExpense[0]);
+            textCategoriesExpenseAmounts.setText(categoriesExpense[1]);
+
+        }
     }
 
     private void setViewIfDbEmpty(){
-        Calendar c = Calendar.getInstance();
-        String date = CustomDate.toCustomDateFromMillis(c.getTimeInMillis());
-        textDateFrom.setText(date);
-        textDateTo.setText(date);
 
         textIncomeTotalAmount.setText("0");
         textExpenseTotalAmount.setText("0");
         textBalanceAmount.setText("0");
+        Toast.makeText(getActivity(), "No transactions for this time period", Toast.LENGTH_LONG).show();
     }
 
+    @OnClick({R.id.txt_from_date, R.id.txt_to_date})
+    public void onDateClicked(View view) {
 
+        switch(view.getId()) {
+            case R.id.txt_from_date:
+                lastDateViewClicked = DATE_FROM_CLICKED;
+                break;
+            case R.id.txt_to_date:
+                lastDateViewClicked = DATE_TO_CLICKED;
+                break;
+        }
+
+        DialogFragment datePickerFragment = new DatePickerFragment();
+        datePickerFragment.setTargetFragment(this,STAT_FRAGMENT_REQUEST_CODE);
+        datePickerFragment.show(getActivity().getSupportFragmentManager(), "datePicker");
+
+    }
+
+    public void onDateSet(DatePicker view, int year, int month, int day) {
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(year,month,day,12, 12,12);
+
+        long dateInMillis = calendar.getTimeInMillis();
+
+        switch (lastDateViewClicked){
+            case DATE_FROM_CLICKED:
+                dateFrom = dateInMillis;
+                textDateFrom.setText(CustomDate.toCustomDateFromMillis(dateInMillis));
+                datesBeenChanged();
+                break;
+            case DATE_TO_CLICKED:
+                dateTo = dateInMillis;
+                textDateTo.setText(CustomDate.toCustomDateFromMillis(dateInMillis));
+                datesBeenChanged();
+                break;
+        }
+
+    }
+
+    private void setDatesRangeCurrentMonth(){
+
+        long [] dates = dateRange.getDateRangeCurrentMonth();
+        dateFrom =  dates[0];
+        dateTo = dates[1];
+
+    }
+//
+//    private ArrayList<CashTransact> getTransactCurrentYear(){
+//
+//        long [] dates = dateRange.getDateRangeCurrentYear();
+//        dateFrom =  dates[0];
+//        dateTo = dates[1];
+//
+//        return getTransactCustomDates(dateFrom, dateTo);
+//    }
+//    private ArrayList<CashTransact> getTransactPreviousMonth(){
+//
+//        long [] dates = dateRange.getDateRangePreviousMonth();
+//        dateFrom =  dates[0];
+//        dateTo = dates[1];
+//
+//        return getTransactCustomDates(dateFrom, dateTo);
+//    }
+
+    private ArrayList<CashTransact> getTransactCustomDates(long dateFrom, long dateTo){
+
+        cashMoneyQuery = ((MainActivity) getActivity()).cashBox
+                .query()
+                .greater(CashTransact_.date, dateFrom)
+                .less(CashTransact_.date, dateTo)
+                .build();
+        ArrayList<CashTransact> cashTransacts = new ArrayList<>(cashMoneyQuery.find());
+        return cashTransacts;
+
+    }
+
+    private void datesBeenChanged(){
+
+        setViewWithAmounts(getTransactCustomDates(dateFrom, dateTo));
+
+    }
 
 }
