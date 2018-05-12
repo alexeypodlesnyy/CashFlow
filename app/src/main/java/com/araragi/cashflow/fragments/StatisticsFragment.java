@@ -6,7 +6,11 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -104,39 +108,8 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
             setDatesRangeCurrentMonth();
         }
 
-        setViewWithAmounts(getTransactCustomDates(dateFrom, dateTo));
+        updateView(getTransactCustomDates(dateFrom, dateTo));
 
-
-//
-//        if(cashTransactArrayList.size() > 0) {
-//
-//            if (savedInstanceState != null) {
-//
-//                lastDateViewClicked = savedInstanceState.getInt(DATE_LAST_CLICKED);
-//                dateTo = savedInstanceState.getLong("dateTo");
-//                dateFrom = savedInstanceState.getLong("dateFrom");
-//
-//            } else {
-//
-//                lastDateViewClicked = 0;
-//                CashTransact transactionMin = Collections.min(cashTransactArrayList);
-//                CashTransact transactionMax = Collections.max(cashTransactArrayList);
-//
-//                dateFrom = transactionMin.getDate();
-//                dateTo = transactionMax.getDate();
-//            }
-//            textDateFrom.setText("From: " + CustomDate.toCustomDateFromMillis(dateFrom));
-//            textDateTo.setText("To: " + CustomDate.toCustomDateFromMillis(dateTo));
-//
-//            calculations = new StatisticalCalculations(cashTransactArrayList);
-//            calculations.calculate();
-//
-//            setViewWithAmounts(calculations);
-//
-//
-//        }else{
-//            setViewIfDbEmpty();
-//        }
 
 
         return view;
@@ -149,15 +122,52 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
         final InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
 
-        //((MainActivity)getActivity()).setToolbarTitle("Statistics");
+        ((MainActivity)getActivity()).setToolbarTitle("Current month");
+    }
+
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
+        menu.clear();
+        inflater.inflate(R.menu.statistics_frgm_menu,menu);
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        int id = item.getItemId();
+
+        if (id == R.id.current_month) {
+            setDatesRangeCurrentMonth();
+            updateView(getTransactCustomDates(dateFrom, dateTo));
+            return true;
+        }
+        if (id == R.id.current_year) {
+            setDatesRangeCurrentYear();
+            updateView(getTransactCustomDates(dateFrom, dateTo));
+            return true;
+        }
+        if (id == R.id.previous_month) {
+            setDatesRangePreviousMonth();
+            updateView(getTransactCustomDates(dateFrom, dateTo));
+            return true;
+        }
+        if (id == R.id.all_transactions) {
+            updateView(getAllTransactions());
+            return true;
+        }
+        if (id == R.id.custom_dates) {
+            Toast.makeText(getActivity(), "Click on date field to set custom dates", Toast.LENGTH_LONG).show();
+            return true;
+        }
+
+
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
     public void onStart() {
         super.onStart();
-
-
-
 
 
     }
@@ -184,16 +194,17 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
 
     }
 
-    private void setViewWithAmounts(ArrayList<CashTransact> cashTransacts){
+    private void updateView(ArrayList<CashTransact> transactions){
 
         textDateFrom.setText(CustomDate.toCustomDateFromMillis(dateFrom));
         textDateTo.setText(CustomDate.toCustomDateFromMillis(dateTo));
 
-        if(cashTransacts.size() == 0){
+
+        if(transactions.size() == 0){
             setViewIfDbEmpty();
         }else {
 
-            StatisticalCalculations calculations = new StatisticalCalculations(cashTransacts);
+            StatisticalCalculations calculations = new StatisticalCalculations(transactions);
             calculations.calculate();
 
             textIncomeTotalAmount.setText(calculations.getTotalIncome().toString());
@@ -216,6 +227,11 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
         textIncomeTotalAmount.setText("0");
         textExpenseTotalAmount.setText("0");
         textBalanceAmount.setText("0");
+        textCategoriesIncome.setText("");
+        textCategoriesIncomeAmounts.setText("");
+
+        textCategoriesExpense.setText("");
+        textCategoriesExpenseAmounts.setText("");
         Toast.makeText(getActivity(), "No transactions for this time period", Toast.LENGTH_LONG).show();
     }
 
@@ -248,41 +264,16 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
             case DATE_FROM_CLICKED:
                 dateFrom = dateInMillis;
                 textDateFrom.setText(CustomDate.toCustomDateFromMillis(dateInMillis));
-                datesBeenChanged();
+                updateView(getTransactCustomDates(dateFrom, dateTo));
                 break;
             case DATE_TO_CLICKED:
                 dateTo = dateInMillis;
                 textDateTo.setText(CustomDate.toCustomDateFromMillis(dateInMillis));
-                datesBeenChanged();
+                updateView(getTransactCustomDates(dateFrom, dateTo));
                 break;
         }
 
     }
-
-    private void setDatesRangeCurrentMonth(){
-
-        long [] dates = dateRange.getDateRangeCurrentMonth();
-        dateFrom =  dates[0];
-        dateTo = dates[1];
-
-    }
-//
-//    private ArrayList<CashTransact> getTransactCurrentYear(){
-//
-//        long [] dates = dateRange.getDateRangeCurrentYear();
-//        dateFrom =  dates[0];
-//        dateTo = dates[1];
-//
-//        return getTransactCustomDates(dateFrom, dateTo);
-//    }
-//    private ArrayList<CashTransact> getTransactPreviousMonth(){
-//
-//        long [] dates = dateRange.getDateRangePreviousMonth();
-//        dateFrom =  dates[0];
-//        dateTo = dates[1];
-//
-//        return getTransactCustomDates(dateFrom, dateTo);
-//    }
 
     private ArrayList<CashTransact> getTransactCustomDates(long dateFrom, long dateTo){
 
@@ -296,10 +287,46 @@ public class StatisticsFragment extends Fragment implements DatePickerDialog.OnD
 
     }
 
-    private void datesBeenChanged(){
+    private void setDatesRangeCurrentMonth(){
 
-        setViewWithAmounts(getTransactCustomDates(dateFrom, dateTo));
+        long [] dates = dateRange.getDateRangeCurrentMonth();
+        dateFrom =  dates[0];
+        dateTo = dates[1];
 
     }
+    private void setDatesRangeCurrentYear(){
+
+        long [] dates = dateRange.getDateRangeCurrentYear();
+        dateFrom =  dates[0];
+        dateTo = dates[1];
+
+    }
+    private void setDatesRangePreviousMonth(){
+
+        long [] dates = dateRange.getDateRangePreviousMonth();
+        dateFrom =  dates[0];
+        dateTo = dates[1];
+
+    }
+    private ArrayList<CashTransact> getAllTransactions(){
+
+
+        ArrayList<CashTransact> cashTransacts = new ArrayList<CashTransact> (cashBox.getAll());
+
+        CashTransact transactionMin = Collections.min(cashTransacts);
+        CashTransact transactionMax = Collections.max(cashTransacts);
+
+        dateFrom = transactionMin.getDate();
+        Log.e("stat", "-----------" + CustomDate.toCustomDateFromMillis(dateFrom));
+        dateTo = transactionMax.getDate();
+        Log.e("stat", "----------" + CustomDate.toCustomDateFromMillis(dateTo));
+
+        return cashTransacts;
+
+    }
+
+
+
+
 
 }

@@ -18,7 +18,12 @@
     <string name="txt_stat_expenxse_total">Expense total</string>
     <string name="txt_stat_balance">Balance</string>
     <string name="save_btn_actionbar">SAVE</string>
-    <string name="btn_save_data_to_file">Copy as .txt</string>
+    <string name="btn_save_data_to_file">Export as .txt</string>
     <string name="text_under_save_to_storage_btn">Click this button to save all your transactions as .txt file to your local storage, directory "Documents"</string>
     <string name="text_about">This app was build to provide only necessary features. Please, review our privacy policy</string>
+    <string name="stat_frgm_current_month_menu_btn">Current month</string>
+    <string name="stat_frgm_current_year_menu_btn">Current year</string>
+    <string name="stat_frgm_previous_month_menu_btn">Previous month</string>
+    <string name="stat_frgm_all_transact">All transactions</string>
+    <string name="stat_frgm_custom_dates">Custom dates</string>
 </resources>
